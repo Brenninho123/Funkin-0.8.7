@@ -5,8 +5,6 @@ import funkin.ui.transition.LoadingState;
 import funkin.ui.TextMenuList;
 import funkin.ui.TextMenuList.TextMenuItem;
 import flixel.math.FlxPoint;
-import funkin.ui.TextMenuList;
-import funkin.ui.TextMenuList.TextMenuItem;
 import flixel.FlxSprite;
 import flixel.FlxObject;
 import flixel.FlxSubState;
@@ -168,6 +166,14 @@ class OptionsMenu extends Page<OptionsMenuPageName>
   {
     super();
     add(items = new TextMenuList());
+
+    #if mobile
+    createItem('MOBILE OPTIONS', function()
+    {
+      // Opens the mobile controls scheme substate or your designated mobile menu
+      FlxG.state.openSubState(new ControlsSchemeMenu());
+    });
+    #end
 
     createItem('PREFERENCES', function() codex.switchPage(Preferences));
     #if mobile
