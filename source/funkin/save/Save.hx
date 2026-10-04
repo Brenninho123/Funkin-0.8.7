@@ -141,6 +141,7 @@ class Save implements ConsoleClass
         // Reasonable defaults.
         screenTimeout: false,
         controlsScheme: FunkinHitboxControlSchemes.Arrows,
+        wideScreen: true,
         noAds: false
       },
       #end
@@ -493,7 +494,7 @@ class Save implements ConsoleClass
     var song = data.scores.songs.get(songId);
     if (song == null)
     {
-      trace(' SAVE '.bold().bg_note_down() + ' WARNING '.warning() + 'Could not find song data for $songId $difficultyId $variation');
+      trace(' SAVE '.bold().bg_note_down() + ' WARNING '.warning() + 'Could not find song data for $songId $difficultyId$variation');
       song = [];
       data.scores.songs.set(songId, song);
     }
@@ -1255,6 +1256,12 @@ typedef SaveDataMobileOptions =
   var controlsScheme:String;
 
   /**
+   * Whether widescreen scaling mode is enabled.
+   * @default `true`
+   */
+  var wideScreen:Bool;
+
+  /**
    * If bought, the game will not show any ads.
    * @default `false`
    */
@@ -1491,8 +1498,6 @@ typedef SaveDataChartEditorOptions =
 
 typedef SaveDataStageEditorOptions =
 {
-  // a lot of these things were copied from savedatacharteditoroptions
-
   /**
    * Whether the Stage Editor created a backup the last time it closed.
    * Prompt the user to load it, then set this back to `false`.
