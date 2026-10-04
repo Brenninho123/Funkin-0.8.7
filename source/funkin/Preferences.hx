@@ -8,6 +8,7 @@ import funkin.save.Save;
 import funkin.util.WindowUtil;
 import funkin.util.HapticUtil.HapticsMode;
 import funkin.ui.debug.FunkinDebugDisplay.DebugDisplayMode;
+import funkin.ui.FullScreenScaleMode;
 #if FEATURE_DISCORD_RPC
 import funkin.api.discord.DiscordClient;
 #end
@@ -63,6 +64,34 @@ class Preferences
 
     return value;
     #end
+  }
+
+  /**
+   * Whether widescreen rendering is enabled.
+   * @default `true`
+   */
+  public static var wideScreen(get, set):Bool;
+
+  static function get_wideScreen():Bool
+  {
+    #if mobile
+    return Save?.instance?.mobileOptions?.wideScreen ?? true;
+    #else
+    return true;
+    #end
+  }
+
+  static function set_wideScreen(value:Bool):Bool
+  {
+    FullScreenScaleMode.enabled = value;
+
+    #if mobile
+    var save:Save = Save.instance;
+    save.mobileOptions.wideScreen = value;
+    Save.system.flush();
+    #end
+
+    return value;
   }
 
   /**
@@ -542,6 +571,8 @@ class Preferences
     setDebugDisplayBGOpacity(Preferences.debugDisplayBGOpacity / 100);
 
     toggleFramerateCap(Preferences.unlockedFramerate);
+
+    FullScreenScaleMode.enabled = Preferences.wideScreen;
 
     #if mobile
     // Apply the allowScreenTimeout setting.
