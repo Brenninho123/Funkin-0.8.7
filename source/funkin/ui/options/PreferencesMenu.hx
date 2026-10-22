@@ -77,7 +77,7 @@ class PreferencesMenu extends Page<OptionsState.OptionsMenuPageName>
     });
 
     #if FEATURE_TOUCH_CONTROLS
-    var backButton:FunkinBackButton = new FunkinBackButton(FlxG.width - 230, FlxG.height - 200, exit, 1.0);
+    var backButton:FunkinBackButton = new FunkinBackButton(FlxG.width - 230, FlxG.height - 200, FlxColor.WHITE, exit, 1.0);
     add(backButton);
     #end
   }
@@ -155,6 +155,11 @@ class PreferencesMenu extends Page<OptionsState.OptionsMenuPageName>
     {
       Preferences.zoomCamera = value;
     }, Preferences.zoomCamera);
+    createPrefItemCheckbox('Shaders', 'When enabled, visual shader effects (stage and character shaders) are applied. Disable for better performance.',
+      function(value:Bool):Void
+      {
+        Preferences.shaders = value;
+      }, Preferences.shaders);
     createPrefItemCheckbox('Subtitles', 'When enabled, subtitles appear during some songs and cutscenes.', function(value:Bool):Void
     {
       Preferences.subtitles = value;

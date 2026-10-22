@@ -10,6 +10,13 @@ import flixel.math.FlxRect;
 import flixel.system.FlxAssets.FlxShader;
 import funkin.graphics.framebuffer.FixedBitmapData;
 import funkin.graphics.shaders.RuntimeCustomBlendShader;
+import funkin.graphics.shaders.DropShadowShader;
+import funkin.graphics.shaders.AdjustColorShader;
+import funkin.graphics.shaders.WaveShader;
+import funkin.graphics.shaders.PuddleShader;
+import funkin.graphics.shaders.WiggleEffectRuntime;
+import funkin.graphics.shaders.SserafimShader;
+import funkin.graphics.shaders.RuntimeRainShader;
 import openfl.display.OpenGLRenderer;
 import openfl.Lib;
 import openfl.display.BitmapData;
@@ -127,9 +134,31 @@ class FunkinCamera extends FlxCamera
     crossCameraBlending = false;
   }
 
+  /**
+   * Returns `null` in place of purely cosmetic shaders (drop shadows, color adjustment, waves, rain, etc.)
+   * when the "Shaders" preference is disabled. Functional shaders (note colors, masks, blend shaders)
+   * are always passed through untouched.
+   */
+  static function filterCosmeticShader(shader:Null<FlxShader>):Null<FlxShader>
+  {
+    if (shader == null || Preferences.shaders) return shader;
+
+    if (Std.isOfType(shader, DropShadowShader)
+      || Std.isOfType(shader, AdjustColorShader)
+      || Std.isOfType(shader, WaveShader)
+      || Std.isOfType(shader, PuddleShader)
+      || Std.isOfType(shader, WiggleEffectRuntime)
+      || Std.isOfType(shader, SserafimShader)
+      || Std.isOfType(shader, RuntimeRainShader)) return null;
+
+    return shader;
+  }
+
   override function drawPixels(?frame:FlxFrame, ?pixels:BitmapData, matrix:FlxMatrix, ?transform:ColorTransform, ?blend:BlendMode, ?smoothing:Bool = false,
       ?shader:FlxShader):Void
   {
+    shader = filterCosmeticShader(shader);
+
     var shouldUseShader:Bool = (!hasKhronosExtension && KHR_BLEND_MODES.contains(blend)) || SHADER_REQUIRED_BLEND_MODES.contains(blend);
 
     // Fallback to the shader implementation if the device doesn't support `KHR_blend_equation_advanced`, or if
@@ -220,6 +249,8 @@ class FunkinCamera extends FlxCamera
   override function startQuadBatch(graphic:FlxGraphic, colored:Bool, hasColorOffsets:Bool = false, ?blend:BlendMode, smooth:Bool = false,
       ?shader:FlxShader):FlxDrawQuadsItem
   {
+    shader = filterCosmeticShader(shader);
+
     // Can't batch complex non-coherent blends, so always force a new batch
     if (hasKhronosExtension && !(OpenGLRenderer.__coherentBlendsSupported ?? false) && KHR_BLEND_MODES.contains(blend))
     {
@@ -272,6 +303,8 @@ class FunkinCamera extends FlxCamera
   override function startTrianglesBatch(graphic:FlxGraphic, smoothing:Bool = false, isColored:Bool = false, ?blend:BlendMode, ?hasColorOffsets:Bool,
       ?shader:FlxShader):FlxDrawTrianglesItem
   {
+    shader = filterCosmeticShader(shader);
+
     // Can't batch complex non-coherent blends, so always force a new batch
     if (hasKhronosExtension
       && !(OpenGLRenderer.__coherentBlendsSupported ?? false)

@@ -12,6 +12,9 @@ import flixel.group.FlxGroup;
 import flixel.util.FlxSignal;
 import funkin.audio.FunkinSound;
 import funkin.ui.mainmenu.MainMenuState;
+#if FEATURE_DEBUG_MENU
+import funkin.ui.debug.DebugMenuSubState;
+#end
 import funkin.ui.MusicBeatState;
 import funkin.graphics.shaders.HSVShader;
 import funkin.input.Controls;
@@ -176,6 +179,11 @@ class OptionsMenu extends Page<OptionsMenuPageName>
     #end
 
     createItem('PREFERENCES', function() codex.switchPage(Preferences));
+    #if FEATURE_DEBUG_MENU
+    // Debug Mode: opens the debug menu (Chart Editor, Animation Editor, Stage Editor, etc.).
+    // Required on mobile, where there is no keyboard key to open it from the main menu.
+    createItem('DEBUG MODE', openDebugMode);
+    #end
     #if mobile
     if (ControlsHandler.hasExternalInputDevice)
     #end
@@ -279,6 +287,31 @@ class OptionsMenu extends Page<OptionsMenuPageName>
     #end
   }
 
+  #if FEATURE_DEBUG_MENU
+  function openDebugMode():Void
+  {
+    var parentState:flixel.FlxState = FlxG.state;
+
+    // Stop the options menu from reacting to input while the debug menu is open.
+    parentState.persistentUpdate = false;
+    items.busy = true;
+
+    parentState.subStateClosed.addOnce(function(_:flixel.FlxSubState):Void
+    {
+      parentState.persistentUpdate = true;
+      items.busy = false;
+
+      // The debug menu repositions the camera, so restore the options menu camera.
+      FlxG.camera.follow(camFocusPoint, null, 0.085);
+      FlxG.camera.deadzone.set(0, CAMERA_MARGIN / 2, FlxG.camera.width, FlxG.camera.height - CAMERA_MARGIN + 40);
+      FlxG.camera.minScrollY = -CAMERA_MARGIN / 2;
+      FlxG.camera.snapToTarget();
+    });
+
+    parentState.openSubState(new DebugMenuSubState());
+  }
+  #end
+
   public function addSaveDataOptionsItem(saveDataMenu:SaveDataMenu):Void
   {
     // no need to show an entire new menu for just one option
@@ -300,7 +333,7 @@ class OptionsMenu extends Page<OptionsMenuPageName>
     #if NO_FEATURE_TOUCH_CONTROLS
     createItem('EXIT', exit);
     #else
-    backButton = new FunkinBackButton(FlxG.width - 230, FlxG.height - 200, exit, 1.0);
+    backButton = new FunkinBackButton(FlxG.width - 230, FlxG.height - 200, FlxColor.WHITE, exit, 1.0);
     backButton.onConfirmStart.add(function()
     {
       items.busy = true;

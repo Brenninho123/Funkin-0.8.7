@@ -2479,6 +2479,11 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
   {
     // super.create() must be called first, the HaxeUI components get created here.
     super.create();
+
+    #if mobile
+    // Touch-friendly on-screen controls (arrows, Space, Undo/Redo, scroll, right click).
+    funkin.ui.debug.mobile.MobileEditorOverlay.attach();
+    #end
     // Set the z-index of the HaxeUI.
     this.root.zIndex = 100;
 
@@ -7510,6 +7515,10 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
 
   override function destroy():Void
   {
+    #if mobile
+    funkin.ui.debug.mobile.MobileEditorOverlay.detach();
+    #end
+
     super.destroy();
 
     cleanupAutoSave();

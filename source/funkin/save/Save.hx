@@ -102,6 +102,7 @@ class Save implements ConsoleClass
         downscroll: false,
         flashingLights: true,
         zoomCamera: true,
+        shaders: true,
         debugDisplay: 'Off',
         debugDisplayBGOpacity: 50,
         subtitles: true,
@@ -1133,6 +1134,12 @@ typedef SaveDataOptions =
    * @default `false`
    */
   var zoomCamera:Bool;
+
+  /**
+   * If disabled, optional visual shader effects (stage and character shaders) are not applied.
+   * @default `true`
+   */
+  var shaders:Bool;
 
   /**
    * If enabled, an FPS and memory counter will be displayed even if this is not a debug build.

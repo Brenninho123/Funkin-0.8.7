@@ -215,7 +215,7 @@ class ControlsMenu extends Page<OptionsState.OptionsMenuPageName>
     add(popup);
 
     #if FEATURE_TOUCH_CONTROLS
-    var backButton:FunkinBackButton = new FunkinBackButton(FlxG.width - 230, FlxG.height - 200, function():Void
+    var backButton:FunkinBackButton = new FunkinBackButton(FlxG.width - 230, FlxG.height - 200, flixel.util.FlxColor.WHITE, function():Void
     {
       if (controlGrid.enabled && deviceList != null && deviceListSelected == false)
       {

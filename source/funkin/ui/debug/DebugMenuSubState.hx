@@ -72,6 +72,11 @@ class DebugMenuSubState extends MusicBeatSubState
     onMenuChange(items.members[0]);
     FlxG.camera.focusOn(new FlxPoint(camFocusPoint.x, camFocusPoint.y + 500));
 
+    #if mobile
+    // No keyboard on mobile, so provide an on-screen back button.
+    addBackButton(FlxG.width - 230, FlxG.height - 200, flixel.util.FlxColor.WHITE, exitDebugMenu, 1.0);
+    #end
+
     #if FEATURE_HAXEUI
     // Remove the "user" stylesheet to prevent components using incorrect style data when entering an editor.
     haxe.ui.Toolkit.styleSheet.clear("user");
@@ -155,6 +160,15 @@ class DebugMenuSubState extends MusicBeatSubState
 
   function exitDebugMenu()
   {
+    #if mobile
+    // Clean up the controls camera created for the back button.
+    if (camControls != null)
+    {
+      FlxG.cameras.remove(camControls);
+      camControls = null;
+    }
+    #end
+
     // TODO: Add a transition?
     this.close();
   }

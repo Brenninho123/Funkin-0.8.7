@@ -220,6 +220,10 @@ class Main extends Sprite
     haxe.ui.Toolkit.theme = 'dark'; // don't be cringe
     // haxe.ui.Toolkit.theme = 'light'; // embrace cringe
     haxe.ui.Toolkit.autoScale = false;
+    #if mobile
+    // Make editor UI big enough to use with a finger.
+    haxe.ui.Toolkit.scale = funkin.ui.debug.mobile.MobileEditorOverlay.MOBILE_UI_SCALE;
+    #end
     // Don't focus on UI elements when they first appear.
     haxe.ui.focus.FocusManager.instance.autoFocus = false;
     funkin.input.Cursor.registerHaxeUICursors();

@@ -883,12 +883,12 @@ class Project extends HXProject
     FEATURE_NEWGROUNDS_AUTOLOGIN.apply(this, FEATURE_NEWGROUNDS.isEnabled(this) && isWeb());
     FEATURE_NEWGROUNDS_EVENTS.apply(this, FEATURE_NEWGROUNDS.isEnabled(this));
 
-    // Should be true except on web and mobile builds.
-    // Debug editors aren't built to work on web or mobile right now.
-    FEATURE_DEBUG_MENU.apply(this, !(isWeb() || isMobile()));
-    FEATURE_ANIMATION_EDITOR.apply(this, !(isWeb() || isMobile()));
-    FEATURE_CHART_EDITOR.apply(this, !(isWeb() || isMobile()));
-    FEATURE_STAGE_EDITOR.apply(this, !(isWeb() || isMobile()));
+    // Should be true except on web builds.
+    // Debug editors are adapted to touch input on mobile (see funkin.ui.debug.mobile.MobileEditorOverlay).
+    FEATURE_DEBUG_MENU.apply(this, !isWeb());
+    FEATURE_ANIMATION_EDITOR.apply(this, !isWeb());
+    FEATURE_CHART_EDITOR.apply(this, !isWeb());
+    FEATURE_STAGE_EDITOR.apply(this, !isWeb());
     FEATURE_HAXEUI.apply(this, FEATURE_ANIMATION_EDITOR.isEnabled(this)
       || FEATURE_CHART_EDITOR.isEnabled(this)
       || FEATURE_STAGE_EDITOR.isEnabled(this));
