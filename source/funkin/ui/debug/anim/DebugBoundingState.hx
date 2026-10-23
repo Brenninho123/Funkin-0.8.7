@@ -117,10 +117,6 @@ class DebugBoundingState extends FlxState
     Cursor.show();
 
     super.create();
-
-    #if mobile
-    funkin.ui.debug.mobile.MobileEditorOverlay.attach();
-    #end
   }
 
   var bf:FlxSprite;
@@ -351,10 +347,6 @@ class DebugBoundingState extends FlxState
 
   override function destroy()
   {
-    #if mobile
-    funkin.ui.debug.mobile.MobileEditorOverlay.detach();
-    #end
-
     super.destroy();
 
     // Hide the mouse cursor on other states.

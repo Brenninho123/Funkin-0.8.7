@@ -853,7 +853,8 @@ class Project extends HXProject
     //
 
     FEATURE_FUNKVIS.apply(this, true);
-    FEATURE_LOG_TRACE.apply(this, true);
+    // Traces are slow on mobile (logcat), so strip them from release builds there.
+    FEATURE_LOG_TRACE.apply(this, !(isMobile() && isRelease()));
     FEATURE_DEBUG_FILE_LOGGING.apply(this, FEATURE_DEBUG_FUNCTIONS.isEnabled(this));
     FEATURE_NAUGHTYNESS.apply(this, true);
     FEATURE_OPEN_URL.apply(this, true);
@@ -884,7 +885,7 @@ class Project extends HXProject
     FEATURE_NEWGROUNDS_EVENTS.apply(this, FEATURE_NEWGROUNDS.isEnabled(this));
 
     // Should be true except on web builds.
-    // Debug editors are adapted to touch input on mobile (see funkin.ui.debug.mobile.MobileEditorOverlay).
+    // Debug editors behave the same as on desktop; on mobile, touch acts as the mouse.
     FEATURE_DEBUG_MENU.apply(this, !isWeb());
     FEATURE_ANIMATION_EDITOR.apply(this, !isWeb());
     FEATURE_CHART_EDITOR.apply(this, !isWeb());
@@ -1035,6 +1036,12 @@ class Project extends HXProject
       // Improve performance on Nape
       // TODO: Do we even use Nape?
       setHaxedef("NAPE_RELEASE_BUILD");
+    }
+
+    // Let the Haxe analyzer optimize release builds (inlining, constant folding, dead assignments).
+    if (isRelease())
+    {
+      setHaxedef("analyzer-optimize");
     }
 
     // Cleaner looking compiler errors.

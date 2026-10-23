@@ -17,6 +17,9 @@ import funkin.graphics.shaders.PuddleShader;
 import funkin.graphics.shaders.WiggleEffectRuntime;
 import funkin.graphics.shaders.SserafimShader;
 import funkin.graphics.shaders.RuntimeRainShader;
+import flixel.addons.display.FlxRuntimeShader;
+import openfl.filters.BitmapFilter;
+import openfl.filters.ShaderFilter;
 import openfl.display.OpenGLRenderer;
 import openfl.Lib;
 import openfl.display.BitmapData;
@@ -149,9 +152,57 @@ class FunkinCamera extends FlxCamera
       || Std.isOfType(shader, PuddleShader)
       || Std.isOfType(shader, WiggleEffectRuntime)
       || Std.isOfType(shader, SserafimShader)
-      || Std.isOfType(shader, RuntimeRainShader)) return null;
+      || Std.isOfType(shader, RuntimeRainShader)
+      // Plain scripted runtime shaders (stage wiggle effects, etc.).
+      || Type.getClass(shader) == FlxRuntimeShader) return null;
 
     return shader;
+  }
+
+  /**
+   * Cache for `getVisibleFilters`, so we don't allocate a new array every frame.
+   */
+  var _filtersSource:Null<Array<BitmapFilter>> = null;
+
+  var _filtersSourceLength:Int = 0;
+  var _filtersResult:Null<Array<BitmapFilter>> = null;
+
+  /**
+   * Returns the camera filters with cosmetic post-processing shaders (rain, etc.) removed.
+   * Transition and fade filters are always kept.
+   */
+  function getVisibleFilters(source:Array<BitmapFilter>):Array<BitmapFilter>
+  {
+    if (source == _filtersSource && source.length == _filtersSourceLength && _filtersResult != null) return _filtersResult;
+
+    var result:Array<BitmapFilter> = [];
+    for (filter in source)
+    {
+      var shaderFilter:Null<ShaderFilter> = Std.downcast(filter, ShaderFilter);
+      if (shaderFilter != null
+        && (Std.isOfType(shaderFilter.shader, RuntimeRainShader)
+          || Std.isOfType(shaderFilter.shader, AdjustColorShader)
+          || Std.isOfType(shaderFilter.shader, WaveShader)
+          || Std.isOfType(shaderFilter.shader, WiggleEffectRuntime))) continue;
+      result.push(filter);
+    }
+
+    _filtersSource = source;
+    _filtersSourceLength = source.length;
+    _filtersResult = result;
+    return result;
+  }
+
+  override function render():Void
+  {
+    var original:Null<Array<BitmapFilter>> = filters;
+
+    // Post-processing filters are expensive; skip the cosmetic ones when Shaders is off.
+    if (original != null && original.length > 0 && !Preferences.shaders) filters = getVisibleFilters(original);
+
+    super.render();
+
+    filters = original;
   }
 
   override function drawPixels(?frame:FlxFrame, ?pixels:BitmapData, matrix:FlxMatrix, ?transform:ColorTransform, ?blend:BlendMode, ?smoothing:Bool = false,

@@ -316,10 +316,6 @@ class StageEditorState extends UIState
     updateBGColors();
 
     super.create();
-
-    #if mobile
-    funkin.ui.debug.mobile.MobileEditorOverlay.attach();
-    #end
     root.scrollFactor.set();
     root.cameras = [camHUD];
     root.width = FlxG.width;
@@ -1646,10 +1642,6 @@ class StageEditorState extends UIState
 
   override function destroy():Void
   {
-    #if mobile
-    funkin.ui.debug.mobile.MobileEditorOverlay.detach();
-    #end
-
     super.destroy();
 
     // Reset the sounds used by some playables.

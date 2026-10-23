@@ -222,7 +222,7 @@ class Main extends Sprite
     haxe.ui.Toolkit.autoScale = false;
     #if mobile
     // Make editor UI big enough to use with a finger.
-    haxe.ui.Toolkit.scale = funkin.ui.debug.mobile.MobileEditorOverlay.MOBILE_UI_SCALE;
+    haxe.ui.Toolkit.scale = 1.5;
     #end
     // Don't focus on UI elements when they first appear.
     haxe.ui.focus.FocusManager.instance.autoFocus = false;
