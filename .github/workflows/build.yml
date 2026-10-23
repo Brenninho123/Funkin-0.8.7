@@ -119,9 +119,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .haxelib
-          key: haxelib-android-${{ hashFiles('hmm.json') }}
-          restore-keys: |
-            haxelib-android-
+          key: haxelib-android-v2-${{ hashFiles('hmm.json') }}
 
       - name: Install HMM
         shell: bash
@@ -160,7 +158,17 @@ jobs:
 
       - name: Build Android (${{ matrix.name }})
         shell: bash
-        run: haxelib run lime build android ${{ matrix.arch_flags }} -release -DGITHUB_BUILD
+        run: |
+          set -o pipefail
+          haxelib run lime build android ${{ matrix.arch_flags }} -release -DGITHUB_BUILD 2>&1 | tee build.log
+
+      - name: Upload build log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log-${{ matrix.name }}
+          path: build.log
+          if-no-files-found: ignore
 
       # Release APKs come out unsigned, which Android refuses to install.
       # Sign them with a throwaway key so they can be sideloaded.
