@@ -366,6 +366,9 @@ class Stage extends FlxSpriteGroup implements IPlayStateScriptedClass implements
    */
   public function setShader(shader:FlxShader):Void
   {
+    // Respect the "Shaders" preference.
+    if (!Preferences.shaders) shader = null;
+
     forEachAlive(function(prop:FlxSprite)
     {
       prop.shader = shader;

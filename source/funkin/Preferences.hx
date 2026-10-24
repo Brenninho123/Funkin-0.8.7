@@ -179,6 +179,26 @@ class Preferences
   }
 
   /**
+   * If disabled, optional visual shader effects (stage and character shaders) are not applied.
+   * Useful for low-end devices.
+   * @default `true`
+   */
+  public static var shaders(get, set):Bool;
+
+  static function get_shaders():Bool
+  {
+    return Save?.instance?.options?.shaders ?? true;
+  }
+
+  static function set_shaders(value:Bool):Bool
+  {
+    var save:Save = Save.instance;
+    save.options.shaders = value;
+    Save.system.flush();
+    return value;
+  }
+
+  /**
    * If enabled, an FPS and memory counter will be displayed even if this is not a debug build.
    * Always disabled on release mobile builds.
    * @default `Off`

@@ -150,7 +150,9 @@ class FunkinButton extends FunkinSprite implements IFlxInput
    */
   override public function destroy():Void
   {
-    deadZones = FlxDestroyUtil.destroyArray(deadZones);
+    // Dead zones are references to sprites owned by someone else (e.g. the pause button owned by PlayState).
+    // Only drop our references; destroying them here would destroy them twice while their owner is being destroyed.
+    deadZones.splice(0, deadZones.length);
     currentInput = null;
     input = null;
 
