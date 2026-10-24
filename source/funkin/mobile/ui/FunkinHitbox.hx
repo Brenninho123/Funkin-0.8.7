@@ -703,14 +703,6 @@ class FunkinHitbox extends FlxTypedSpriteGroup<FunkinHint>
     FlxDestroyUtil.destroy(onHintDown);
     FlxDestroyUtil.destroy(onHintUp);
 
-    // Detach the hints from this group before destroying them. FlxGroup.destroy() tears down its
-    // `memberRemoved` signal first, so each hint removing itself from the group while being
-    // destroyed would dispatch on a dead signal and throw a Null Object Reference.
-    for (hint in members)
-    {
-      if (hint != null) hint.container = null;
-    }
-
     super.destroy();
   }
 
